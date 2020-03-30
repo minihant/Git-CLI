@@ -168,3 +168,29 @@ Rebase	是	          不管是新增、修改、刪除 Commit 都相當方便，
 Revert	否	           新增一個 Commit 來反轉（或說取消）另一個 Commit 的內容，原本的 Commit 依舊還是會保留在歷史紀錄中。
                       雖然會因此而增加 Commit 數，但通常比較適用於已經推出去的 Commit，或是不允許使用 Reset 或 Rebase 之修改歷史紀錄的指令的場合。
 ```
+
+## 【狀況題】手邊的工作做到一半，臨時要切換到別的任務
+```
+1. 那就先 Commit 目前的進度吧！
+    然後就可以切到有問題的分支先進行功能修復，待完成之後再切回原來做一半的 cat 分支，然後再 Reset 一下，把剛剛做一半的東西拆回來繼續做：
+git add --all
+git commit -m "not finish yet"
+......
+git reset HEAD^
+
+2.使用 Stash
+  git stash
+  git stash list    :查查剛剛那些檔案存到哪去了
+  .....
+  .....
+  git stash pop stash@{2}   :stash@{2} 應該是我剛剛最一開始做一半的進度，所以我要把它撿回來做
+  
+  使用 pop 指令，可以把某個 Stash 拿出來並套用在目前的分支上。套用成功之後，那個套用過的 Stash 就會被刪除。
+  如果後面沒有指定要 pop 哪一個 Stash，會從編號最小的，也就是 stash@{0} 開始拿（也就是最後疊上去的那次）。
+  
+  如果那個 Stash 確定不要，可以使用 drop 指令：
+  git stash drop stash@{0}    :這樣就可以把那個 Stash 從列表裡刪掉了。
+  
+  要把 Stash 撿回來用，除了 pop 之外，另一個指令是 apply:
+  git stash apply stash@{0}
+```
